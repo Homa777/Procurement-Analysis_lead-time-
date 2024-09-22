@@ -14,7 +14,7 @@ Steps Involved:
 The procurement team gathers historical data on supplier lead times along with various potential predictor variables, such as: • Order Volume: The quantity of materials ordered from each supplier. • Supplier Location: Geographic distance between the supplier and the manufacturing plant. • Supplier Capacity: Maximum production capacity of each supplier. • Order Frequency: How often orders are placed with each supplier. • Material Complexity: Complexity or customization level of the materials being procured. • Economic Indicators: Factors like inflation rates or currency exchange rates that might impact supplier performance. • Supplier Relationship Score: A qualitative measure of the relationship strength with each supplier, possibly based on communication effectiveness and collaboration.
 
     2.      Choosing the Regression Model:
-    •       Multiple Linear Regression is selected since multiple independent variables are being analyzed to predict the dependent variable (supplier lead time).
+ Multiple Linear Regression is selected since multiple independent variables are being analyzed to predict the dependent variable (supplier lead time).
 
     3.      Model Development:
 The regression equation might look like this:
