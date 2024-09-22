@@ -1,0 +1,104 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Number of samples
+n_samples = 500
+
+# Generate synthetic data
+data = pd.DataFrame({
+    'Order_Volume': np.random.randint(50, 1000, size=n_samples),
+    'Supplier_Location': np.random.uniform(10, 1000, size=n_samples),  # in km
+    'Supplier_Capacity': np.random.uniform(1000, 10000, size=n_samples),  # units/month
+    'Order_Frequency': np.random.randint(1, 20, size=n_samples),
+    'Material_Complexity': np.random.randint(1, 11, size=n_samples),
+    'Economic_Indicators': np.random.uniform(1, 10, size=n_samples),  # e.g., inflation rate
+    'Supplier_Relationship_Score': np.random.randint(1, 11, size=n_samples)
+})
+
+# Assume some relationships with Lead_Time
+coefficients = {
+    'Order_Volume': 0.005,
+    'Supplier_Location': 0.002,
+    'Supplier_Capacity': -0.001,
+    'Order_Frequency': 0.1,
+    'Material_Complexity': 0.5,
+    'Economic_Indicators': 0.3,
+    'Supplier_Relationship_Score': -0.4
+}
+
+# Generate Lead_Time with some noise
+data['Lead_Time'] = (
+    data['Order_Volume'] * coefficients['Order_Volume'] +
+    data['Supplier_Location'] * coefficients['Supplier_Location'] +
+    data['Supplier_Capacity'] * coefficients['Supplier_Capacity'] +
+    data['Order_Frequency'] * coefficients['Order_Frequency'] +
+    data['Material_Complexity'] * coefficients['Material_Complexity'] +
+    data['Economic_Indicators'] * coefficients['Economic_Indicators'] +
+    data['Supplier_Relationship_Score'] * coefficients['Supplier_Relationship_Score'] +
+    np.random.normal(0, 5, size=n_samples)
+)
+
+# Display first few rows
+print("First 5 rows of the dataset:")
+print(data.head())
+
+# Check for missing values
+print("\nMissing values in each column:")
+print(data.isnull().sum())
+
+# Descriptive statistics
+print("\nDescriptive statistics:")
+print(data.describe())
+
+# Pairplot to visualize relationships
+sns.pairplot(data[['Lead_Time', 'Order_Volume', 'Supplier_Location', 'Supplier_Capacity',
+                  'Order_Frequency', 'Material_Complexity', 'Economic_Indicators',
+                  'Supplier_Relationship_Score']])
+plt.tight_layout()
+plt.show()
+
+# Correlation matrix
+plt.figure(figsize=(10, 8))
+corr_matrix = data.corr()
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Matrix')
+plt.show()
+
+# Define independent variables (features) and dependent variable
+X = data[['Order_Volume', 'Supplier_Location', 'Supplier_Capacity',
+          'Order_Frequency', 'Material_Complexity', 'Economic_Indicators',
+          'Supplier_Relationship_Score']]
+y = data['Lead_Time']
+
+# Add a constant term to the predictor
+X = sm.add_constant(X)
+
+# Fit the regression model
+model = sm.OLS(y, X).fit()
+
+# Print the regression results
+print("\nRegression Results:")
+print(model.summary())
+
+# Plot residuals
+plt.figure(figsize=(10,6))
+sns.residplot(x=model.fittedvalues, y=model.resid, lowess=True, line_kws={'color': 'red', 'lw': 1})
+plt.xlabel('Fitted Values')
+plt.ylabel('Residuals')
+plt.title('Residuals vs Fitted')
+plt.show()
+
+# Plot actual vs predicted
+plt.figure(figsize=(10,6))
+sns.scatterplot(x=y, y=model.fittedvalues)
+plt.xlabel('Actual Lead Time')
+plt.ylabel('Predicted Lead Time')
+plt.title('Actual vs Predicted Lead Time')
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color='red', linestyle='--')
+plt.show()
