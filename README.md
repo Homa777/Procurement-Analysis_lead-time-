@@ -16,8 +16,6 @@ The procurement team gathers historical data on supplier lead times along with v
     2.      Choosing the Regression Model:
     •       Multiple Linear Regression is selected since multiple independent variables are being analyzed to predict the dependent variable (supplier lead time).
 
-
-
     3.      Model Development:
 The regression equation might look like this:
 
